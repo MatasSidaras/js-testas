@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skills</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #eee;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      h1 {
+        color: #333;
+        margin: 20px 0;
+      }
+
+      #skills-table {
+        width: 50%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      }
+
+      #skills-table th,
+      #skills-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+      }
+
+      #skills-table th {
+        background-color: #f2f2f2;
+      }
+
+      button {
+        padding: 8px 16px;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        margin: 10px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Skills</h1>
+    <table id="skills-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Skill</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="load-skills">View skills</button>
+    <button id="add-skill">Add skill</button>
+    <script>
+      const BASE_URL = "https://testapi.io/api/MatSid/resource";
+
+      document
+        .getElementById("load-skills")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch(`${BASE_URL}/testskills`);
+            const data = await response.json();
+            displaySkills(data);
+          } catch (error) {
+            alert("Error: " + error.message);
+          }
+        });
+
+      const skillsTable = document.getElementById("skills-table");
+      skillsTable.addEventListener("click", async (event) => {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.textContent === "delete"
+        ) {
+          try {
+            const skillId = event.target.dataset.id;
+            const response = await fetch(`${BASE_URL}/testskills/${skillId}`, {
+              method: "DELETE",
+            });
+
+            if (response.ok) {
+              event.target.closest("tr").remove();
+              alert("Success");
+            } else {
+              alert("Error: " + (await response.json()).error);
+            }
+          } catch (error) {
+            alert("Error: " + error.message);
+          }
+        }
+      });
+
+      document.getElementById("add-skill").addEventListener("click", () => {
+        window.location.href = "add.html";
+      });
+
+      function displaySkills(data) {
+        const skills = data.data;
+
+        const tbody = document.querySelector("#skills-table tbody");
+        tbody.innerHTML = "";
+
+        for (const skillObject of skills) {
+          const row = document.createElement("tr");
+          const skill = skillObject.skills;
+          const skillId = skillObject.id;
+
+          row.innerHTML = `
+      <td>${skillId}</td>
+      <td>${skill}</td>
+      <td><button data-id="${skillId}">delete</button></td>
+    `;
+          tbody.appendChild(row);
+        }
+      }
+    </script>
+  </body>
+</html>

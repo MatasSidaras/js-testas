@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Skill</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #eee;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      h1 {
+        color: #333;
+        margin: 20px 0;
+      }
+
+      #skill-form {
+        width: 50%;
+        margin: 20px auto;
+        background-color: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 5px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      #back-to-skills {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #777;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      #back-to-skills:hover {
+        color: #555;
+      }
+    </style>
+    ++
+  </head>
+  <body>
+    <h1>Skills that are important for a developer</h1>
+    <form id="skill-form">
+      <label>
+        Skill:
+        <input type="text" id="skill-input" required />
+      </label>
+      <button type="submit">Add skill</button>
+    </form>
+    <button id="back-to-skills">Back to skills</button>
+    <script>
+      const BASE_URL = "https://testapi.io/api/MatSid/resource";
+
+      const skillForm = document.getElementById("skill-form");
+      skillForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          const skill = document.getElementById("skill-input").value;
+          const response = await fetch(`${BASE_URL}/testskills`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ skills: skill }),
+          });
+          if (response.ok) {
+            alert("Success");
+            window.location.href = "index.html";
+          } else {
+            alert("Error: " + (await response.json()).error);
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      });
+
+      document
+        .getElementById("back-to-skills")
+        .addEventListener("click", () => {
+          window.location.href = "index.html";
+        });
+    </script>
+  </body>
+</html>
